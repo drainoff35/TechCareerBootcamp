@@ -38,11 +38,19 @@ public class RentalService implements IRentalService {
     public Rental Create(Rental rental) {
         Car car = carRepository.findById(rental.getCar().getId()).orElseThrow(() -> new RuntimeException("Car not found"));
         Customer customer = customerRepository.findById(rental.getCustomer().getId()).orElseThrow(() -> new RuntimeException("Customer not found"));
-
+        long days=ChronoUnit.DAYS.between(rental.getStartDate(), rental.getEndDate());
         rental.setCar(car);
         rental.setCustomer(customer);
+
+        if (customer.isIndividual() && !car.isHatchbackOrSedan()){
+            throw new RuntimeException("Individual customers can't rent Suv");
+        }
+
+        if (!car.isHatchbackOrSedan() && days >= 30) {
+            throw new RuntimeException("SUV cars can only rent daily.");
+        }
+
         if (!rental.getCar().isHatchbackOrSedan()){
-            long days=ChronoUnit.DAYS.between(rental.getStartDate(), rental.getEndDate());
             if (days>30){
                  throw new RuntimeException("SUV's only can rent daily.");
             }
@@ -62,15 +70,6 @@ public class RentalService implements IRentalService {
 
         rental.setCar(car);
         rental.setCustomer(customer);
-        long daysBetween = ChronoUnit.DAYS.between(rental.getStartDate(),rental.getEndDate());
-
-        if (customer.isIndividual() && !car.isHatchbackOrSedan()){
-            throw new RuntimeException("Individual customers can only rent Hatchback and Sedan cars.");
-        }
-
-        if (!car.isHatchbackOrSedan() && daysBetween >= 30) {
-            throw new RuntimeException("SUV cars can only be rented on a daily basis.");
-        }
 
 
         if(temp!=null){
