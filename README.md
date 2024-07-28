@@ -1,4 +1,4 @@
-# Lab Reporting System
+# Car Rental Project
 
 Bu proje, Java Spring kullanarak gelistirilmis bir web uygulamasidir. Uygulama, `rental`, `car`, ve `customer` gibi varliklari iceren bir CRUD islemleri sistemini icerir. 
 
