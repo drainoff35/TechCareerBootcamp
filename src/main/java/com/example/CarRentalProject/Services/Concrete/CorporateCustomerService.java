@@ -1,49 +1,65 @@
 package com.example.CarRentalProject.Services.Concrete;
 
+import com.example.CarRentalProject.DTOs.CarDto;
+import com.example.CarRentalProject.DTOs.CorporateCustomerRequestDto;
+import com.example.CarRentalProject.DTOs.CustomerDto;
 import com.example.CarRentalProject.Entities.Concrete.CorporateCustomer;
 import com.example.CarRentalProject.Repositories.CorporateCustomerRepository;
 import com.example.CarRentalProject.Services.Abstract.ICorporateCustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CorporateCustomerService implements ICorporateCustomerService {
     private final CorporateCustomerRepository corporateCustomerRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
-    public List<CorporateCustomer> GetAll() {
-        return corporateCustomerRepository.findAll();
+    public List<CorporateCustomerRequestDto> GetAll() {
+        return corporateCustomerRepository.findAll().stream()
+                .map(customer -> modelMapper.map(customer, CorporateCustomerRequestDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CorporateCustomer> GetById(Long aLong) {
-        return corporateCustomerRepository.findById(aLong);
+    public CorporateCustomerRequestDto GetById(Long aLong) {
+        CorporateCustomer customer = corporateCustomerRepository.findById(aLong).orElseThrow(()-> new EntityNotFoundException("Customer not found with id: "+aLong));
+        return modelMapper.map(customer, CorporateCustomerRequestDto.class);
     }
 
     @Override
-    public CorporateCustomer Create(CorporateCustomer corporateCustomer) {
-        return corporateCustomerRepository.save(corporateCustomer);
+    public Boolean Create(CorporateCustomerRequestDto dto) {
+        CorporateCustomer customer = modelMapper.map(dto, CorporateCustomer.class);
+        corporateCustomerRepository.save(customer);
+        return true;
+
     }
 
     @Override
-    public CorporateCustomer Update(Long aLong, CorporateCustomer corporateCustomer) {
+    public Boolean Update(Long aLong, CorporateCustomerRequestDto dto) {
         CorporateCustomer temp=corporateCustomerRepository.findById(aLong).orElseThrow(()-> new EntityNotFoundException("Customer not found with id:"+ aLong));
         if (temp!=null){
-            temp.setName(corporateCustomer.getName());
-            temp.setTaxNo(corporateCustomer.getTaxNo());
-            temp.setPhoneNumber(corporateCustomer.getPhoneNumber());
+            temp.setPhoneNumber(dto.getPhoneNumber());
+            temp.setTaxNo(dto.getTaxNo());
+            temp.setName(dto.getName());
         }
-        return corporateCustomerRepository.save(corporateCustomer);
+        corporateCustomerRepository.save(temp);
+        return true;
+
     }
 
     @Override
-    public void Delete(Long aLong) {
+    public Void Delete(Long aLong) {
     corporateCustomerRepository.deleteById(aLong);
+    return null;
     }
 }

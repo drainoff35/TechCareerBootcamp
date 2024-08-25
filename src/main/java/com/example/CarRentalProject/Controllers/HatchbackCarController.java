@@ -1,5 +1,8 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.CorporateCustomerRequestDto;
+import com.example.CarRentalProject.DTOs.HatchbackCarRequestDto;
+import com.example.CarRentalProject.DTOs.IndividualCustomerRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.HatchbackCar;
 import com.example.CarRentalProject.Services.Concrete.HatchbackCarService;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +23,26 @@ public class HatchbackCarController {
     private final HatchbackCarService service;
 
     @GetMapping
-    public ResponseEntity<List<HatchbackCar>> GetAllHatchbackCar() {
-        return new ResponseEntity<>(service.GetAll(), HttpStatus.OK);
+    public ResponseEntity<List<HatchbackCarRequestDto>> GetAllHatchbackCar() {
+        List<HatchbackCarRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<HatchbackCar> GetHatchbackCarById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<HatchbackCarRequestDto> GetHatchbackCarById(@PathVariable long id) {
+        HatchbackCarRequestDto dto = service.GetById(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<HatchbackCar> CreateHatchbackCar(@RequestBody HatchbackCar hatchbackCar) {
-        return new ResponseEntity<>(service.Create(hatchbackCar), HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateHatchbackCar(@RequestBody HatchbackCarRequestDto dto) {
+        Boolean isCreated= service.Create(dto);
+        return new ResponseEntity<>(isCreated, HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<HatchbackCar> UpdateHatchbackCar(@PathVariable long id, @RequestBody HatchbackCar hatchbackCar) {
-        return new ResponseEntity<>(service.Update(id, hatchbackCar), HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateHatchbackCar(@PathVariable long id, @RequestBody HatchbackCarRequestDto dto) {
+        Boolean isUpdate=service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

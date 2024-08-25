@@ -1,5 +1,6 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.CorporateCustomerRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.CorporateCustomer;
 import com.example.CarRentalProject.Services.Concrete.CorporateCustomerService;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +19,26 @@ public class CorporateCustomerController {
     private final CorporateCustomerService service;
 
     @GetMapping
-    public ResponseEntity<List<CorporateCustomer>> GetAllCustomers() {
-        return new ResponseEntity<>(service.GetAll(),HttpStatus.OK);
+    public ResponseEntity<List<CorporateCustomerRequestDto>> GetAllCustomers() {
+        List<CorporateCustomerRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public Optional<CorporateCustomer> GetCustomerById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<CorporateCustomerRequestDto> GetCustomerById(@PathVariable long id) {
+        CorporateCustomerRequestDto dto=service.GetById(id);
+        return new ResponseEntity<>(dto,HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CorporateCustomer> CreateCustomer(@RequestBody CorporateCustomer customer) {
-        return new ResponseEntity<>(service.Create(customer),HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateCustomer(@RequestBody CorporateCustomerRequestDto dto) {
+        Boolean isCreated=service.Create(dto);
+        return new ResponseEntity<>(isCreated,HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CorporateCustomer> UpdateCustomer(@PathVariable long id,@RequestBody CorporateCustomer customer) {
-        return new ResponseEntity<>(service.Update(id,customer),HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateCustomer(@PathVariable long id,@RequestBody CorporateCustomerRequestDto dto) {
+        Boolean isUpdate = service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate,HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

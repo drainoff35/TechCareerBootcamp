@@ -1,5 +1,7 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.SUVCarRequestDto;
+import com.example.CarRentalProject.DTOs.SedanCarRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.SUVCar;
 import com.example.CarRentalProject.Entities.Concrete.SedanCar;
 import com.example.CarRentalProject.Services.Concrete.SUVCarService;
@@ -18,22 +20,26 @@ public class SUVCarController {
     private final SUVCarService service;
 
     @GetMapping
-    public ResponseEntity<List<SUVCar>> GetAllSUVCar() {
-        return new ResponseEntity<>(service.GetAll(), HttpStatus.OK);
+    public ResponseEntity<List<SUVCarRequestDto>> GetAllSUVCar() {
+        List<SUVCarRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<SUVCar> GetSUVCarById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<SUVCarRequestDto> GetSUVCarById(@PathVariable long id) {
+        SUVCarRequestDto dto = service.GetById(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<SUVCar> CreateSUVCar(@RequestBody SUVCar suvCar) {
-        return new ResponseEntity<>(service.Create(suvCar), HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateSUVCar(@RequestBody SUVCarRequestDto dto) {
+        Boolean isCreated= service.Create(dto);
+        return new ResponseEntity<>(isCreated, HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<SUVCar> UpdateSUVCar(@PathVariable long id, @RequestBody SUVCar suvCar) {
-        return new ResponseEntity<>(service.Update(id, suvCar), HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateSUVCar(@PathVariable long id, @RequestBody SUVCarRequestDto dto) {
+        Boolean isUpdate=service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

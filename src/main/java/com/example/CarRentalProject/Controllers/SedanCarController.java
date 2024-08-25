@@ -1,5 +1,7 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.RentalRequestDto;
+import com.example.CarRentalProject.DTOs.SedanCarRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.HatchbackCar;
 import com.example.CarRentalProject.Entities.Concrete.SedanCar;
 import com.example.CarRentalProject.Services.Concrete.SedanCarService;
@@ -18,22 +20,26 @@ public class SedanCarController {
     private final SedanCarService service;
 
     @GetMapping
-    public ResponseEntity<List<SedanCar>> GetAllSedanCar() {
-        return new ResponseEntity<>(service.GetAll(), HttpStatus.OK);
+    public ResponseEntity<List<SedanCarRequestDto>> GetAllSedanCar() {
+        List<SedanCarRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<SedanCar> GetSedanCarById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<SedanCarRequestDto> GetSedanCarById(@PathVariable long id) {
+        SedanCarRequestDto dto = service.GetById(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<SedanCar> CreateSedanCar(@RequestBody SedanCar sedanCar) {
-        return new ResponseEntity<>(service.Create(sedanCar), HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateSedanCar(@RequestBody SedanCarRequestDto dto) {
+        Boolean isCreated= service.Create(dto);
+        return new ResponseEntity<>(isCreated, HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<SedanCar> UpdateSedanCar(@PathVariable long id, @RequestBody SedanCar sedanCar) {
-        return new ResponseEntity<>(service.Update(id, sedanCar), HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateSedanCar(@PathVariable long id, @RequestBody SedanCarRequestDto dto) {
+        Boolean isUpdate=service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

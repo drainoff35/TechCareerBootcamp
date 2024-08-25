@@ -1,5 +1,6 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.IndividualCustomerRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.HatchbackCar;
 import com.example.CarRentalProject.Entities.Concrete.IndividualCustomer;
 import com.example.CarRentalProject.Services.Concrete.IndividualCustomerService;
@@ -18,22 +19,26 @@ public class IndividualCustomerController {
     private final IndividualCustomerService service;
 
     @GetMapping
-    public ResponseEntity<List<IndividualCustomer>> GetAllIndividualCustomer() {
-        return new ResponseEntity<>(service.GetAll(), HttpStatus.OK);
+    public ResponseEntity<List<IndividualCustomerRequestDto>> GetAllIndividualCustomer() {
+        List<IndividualCustomerRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<IndividualCustomer> GetIndividualCustomerById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<IndividualCustomerRequestDto> GetIndividualCustomerById(@PathVariable long id) {
+        IndividualCustomerRequestDto dto = service.GetById(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<IndividualCustomer> CreateIndividualCustomer(@RequestBody IndividualCustomer individualCustomer) {
-        return new ResponseEntity<>(service.Create(individualCustomer), HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateIndividualCustomer(@RequestBody IndividualCustomerRequestDto dto) {
+        Boolean isCreated= service.Create(dto);
+        return new ResponseEntity<>(isCreated, HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<IndividualCustomer> UpdateIndividualCustomer(@PathVariable long id, @RequestBody IndividualCustomer individualCustomer) {
-        return new ResponseEntity<>(service.Update(id, individualCustomer), HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateIndividualCustomer(@PathVariable long id, @RequestBody IndividualCustomerRequestDto dto) {
+        Boolean isUpdate=service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

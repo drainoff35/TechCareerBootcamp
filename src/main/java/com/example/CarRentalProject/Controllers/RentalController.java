@@ -1,5 +1,7 @@
 package com.example.CarRentalProject.Controllers;
 
+import com.example.CarRentalProject.DTOs.IndividualCustomerRequestDto;
+import com.example.CarRentalProject.DTOs.RentalRequestDto;
 import com.example.CarRentalProject.Entities.Concrete.IndividualCustomer;
 import com.example.CarRentalProject.Entities.Concrete.Rental;
 import com.example.CarRentalProject.Services.Concrete.RentalService;
@@ -18,22 +20,26 @@ public class RentalController {
     private final RentalService service;
 
     @GetMapping
-    public ResponseEntity<List<Rental>> GetAllRental() {
-        return new ResponseEntity<>(service.GetAll(), HttpStatus.OK);
+    public ResponseEntity<List<RentalRequestDto>> GetAllRental() {
+        List<RentalRequestDto> dto = service.GetAll();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Optional<Rental> GetRentalById(@PathVariable long id) {
-        return service.GetById(id);
+    public ResponseEntity<RentalRequestDto> GetRentalById(@PathVariable long id) {
+        RentalRequestDto dto = service.GetById(id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Rental> CreateRental(@RequestBody Rental rental) {
-        return new ResponseEntity<>(service.Create(rental), HttpStatus.CREATED);
+    public ResponseEntity<Boolean> CreateRental(@RequestBody RentalRequestDto dto) {
+        Boolean isCreated= service.Create(dto);
+        return new ResponseEntity<>(isCreated, HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<Rental> UpdateRental(@PathVariable long id, @RequestBody Rental rental) {
-        return new ResponseEntity<>(service.Update(id, rental), HttpStatus.OK);
+    public ResponseEntity<Boolean> UpdateRental(@PathVariable long id, @RequestBody RentalRequestDto dto) {
+        Boolean isUpdate=service.Update(id, dto);
+        return new ResponseEntity<>(isUpdate, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
